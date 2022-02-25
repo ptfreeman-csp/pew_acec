@@ -1,7 +1,5 @@
 
 
-today <- Sys.Date()
-
 # maybe necessary if some raster aren't loading
 # unlink(".RData")
 

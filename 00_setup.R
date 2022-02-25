@@ -12,7 +12,7 @@ wd <- "G:/My Drive/2Pew ACEC/Pew_ACEC/"
 
 #####################################
 # Install packages if not already installed
-required.packages <- c("plyr", "ggplot2", "gridExtra", "raster", "sf", "rgdal", "dplyr",
+required.packages <- c("plyr", "ggplot2", "gridExtra", "terra", "raster", "sf", "rgdal", "dplyr",
                        "tidyverse", "maptools", "rgeos", 
                        "partykit", "vcd", "maps", "mgcv", "tmap",
                        "MASS", "pROC", "ResourceSelection", "caret", "broom", "boot",
@@ -20,13 +20,14 @@ required.packages <- c("plyr", "ggplot2", "gridExtra", "raster", "sf", "rgdal", 
                        "ggspatial", "lmtest",  "dynatopmodel", "spatialEco", "exactextractr", "fasterize",
                        "chemCal")
 new.packages <- required.packages[!(required.packages %in% installed.packages()[,"Package"])]
-if(length(new.packages)>0) install.packages(new.packages)
+if(length(new.packages)>0) install.packages(new.packages, dependencies = "TRUE")
 rm(required.packages, new.packages)
 
 # Libraries
 # library(plyr)
 library(ggplot2)
 library(gridExtra)
+library(terra)
 library(raster)
 # library(sp)
 library(sf)
