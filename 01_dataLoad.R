@@ -11,6 +11,7 @@
 load_f <- function(f) {
   # proj.crs <- "+proj=longlat +datum=WGS84 +no_defs"
   proj.crs <- "+proj=aea +lat_0=23 +lon_0=-96 +lat_1=29.5 +lat_2=45.5 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
+  # proj.crs <- "+proj=aea +lat_0=0 +lon_0=0 +lat_1=29.5 +lat_2=45.5 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs"
   read_sf(f) %>%
     st_transform(proj.crs) %>%
     st_make_valid() %>%
@@ -18,6 +19,7 @@ load_f <- function(f) {
 }
 # proj.crs <- "+proj=longlat +datum=WGS84 +no_defs"
 proj.crs <- "+proj=aea +lat_0=23 +lon_0=-96 +lat_1=29.5 +lat_2=45.5 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
+# proj.crs <- "+proj=aea +lat_0=0 +lon_0=0 +lat_1=29.5 +lat_2=45.5 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs"
 
 
 ## Load data
