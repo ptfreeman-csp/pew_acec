@@ -6,7 +6,7 @@
 ## Set working directory 
 setwd("G:/My Drive/2Pew ACEC/Pew_ACEC/")
 wd <- "G:/My Drive/2Pew ACEC/Pew_ACEC/"
-
+data.dir <- "G:/My Drive/2Pew ACEC/Pew_ACEC/data/" 
 
 
 
@@ -212,22 +212,7 @@ palette <- brewer.pal(8, "Set2")
 palette <- brewer.pal(8, "RdYlBu")
 
 
-###########################################
-theme_caitlin <- function(base_size=12, base_family="sans") {
-  library(grid)
-  library(ggthemes)
-  (theme_foundation(base_size=base_size, base_family=base_family)
-    + theme(text = element_text(size=12),
-            axis.text.x = element_text(color="black", size=10),
-            axis.text.y = element_text(color="black", size=10),
-            panel.grid.major = element_blank(),
-            panel.grid.minor = element_blank(),
-            plot.background = element_blank())
-  )
-}
 
-
-# 
 # 
 # #######################################################################
 # ## To plot raster in ggplot, extract values into tibble
@@ -254,38 +239,3 @@ theme_caitlin <- function(base_size=12, base_family="sans") {
 # 
 # 
 # #######################################################################
-# ## From ggExtra -- to specify size of plots (adapted align.plots)
-# 
-# align.plots2 <- function (..., vertical = TRUE, pos = NULL) 
-# {
-#   dots <- list(...)
-#   if (is.null(pos)) pos <- lapply(seq(dots), I)
-#   dots <- lapply(dots, ggplotGrob)
-#   ytitles <- lapply(dots, function(.g) editGrob(getGrob(.g, 
-#                                                         "axis.title.y.text", grep = TRUE), vp = NULL))
-#   ylabels <- lapply(dots, function(.g) editGrob(getGrob(.g, 
-#                                                         "axis.text.y.text", grep = TRUE), vp = NULL))
-#   legends <- lapply(dots, function(.g) if (!is.null(.g$children$legends)) 
-#     editGrob(.g$children$legends, vp = NULL)
-#     else ggplot2:::.zeroGrob)
-#   gl <- grid.layout(nrow = do.call(max,pos))
-#   vp <- viewport(layout = gl)
-#   pushViewport(vp)
-#   widths.left <- mapply(`+`, e1 = lapply(ytitles, grobWidth), 
-#                         e2 = lapply(ylabels, grobWidth), SIMPLIFY = F)
-#   widths.right <- lapply(legends, function(g) grobWidth(g) + 
-#                            if (is.zero(g)) 
-#                              unit(0, "lines")
-#                          else unit(0.5, "lines"))
-#   widths.left.max <- max(do.call(unit.c, widths.left))
-#   widths.right.max <- max(do.call(unit.c, widths.right))
-#   for (ii in seq_along(dots)) {
-#     pushViewport(viewport(layout.pos.row = pos[[ii]]))
-#     pushViewport(viewport(x = unit(0, "npc") + widths.left.max - 
-#                             widths.left[[ii]], width = unit(1, "npc") - widths.left.max + 
-#                             widths.left[[ii]] - widths.right.max + widths.right[[ii]], 
-#                           just = "left"))
-#     grid.draw(dots[[ii]])
-#     upViewport(2)
-#   }
-# }
