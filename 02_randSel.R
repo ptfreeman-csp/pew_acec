@@ -2,26 +2,21 @@
 ## GENERATE RANDOM SAMPLE OF PA AREA ##
 #######################################
 
-
-
 today <- paste0(mid(Sys.Date(),3,2),
                 mid(Sys.Date(),6,2),
                 mid(Sys.Date(),9,2))
 
-domain <- biome # Domain from which to sample values.
-boundary <- ynp # Boundary of existing/proposed PA.
+domain <- west # Domain from which to sample values.
+boundary <- ls # Boundary of existing/proposed PA.
 
 # Compute target area of that PA. Convert from simple feature (sf) to spatial.
-(trgt_area <- terra::area(as_Spatial(ynp))) # 8904687776 sqm; checks out.
-# boundary.r <- fasterize(boundary, amph) %>%
-#   crop(ynp) %>% mask(ynp) # Turn into raster but keep small.
-# area(boundary.r) # Not recommended as object is projected and not lat/long
-
+(trgt_area <- terra::area(as_Spatial(boundary), unit = "m")) 
+# ^ THIS CAN'T BE LAT/LON
 
 
 # The number of samples generated in each iteration
 n <- 1000 # consider starting with way too many then pruning.
-n <- 100
+# n <- 100
 # n <- 10
 
 # Generate n random points within domain
@@ -69,8 +64,7 @@ pts = sf::st_sample(domain, size = n) ; str(pts)
 
 
 ggplot() + 
-  # geom_raster(aes(), data = amph) +
-  geom_sf(aes(), data=biome) + 
+  geom_sf(aes(), data=west) +
   geom_sf(aes(), data=pts)
 
 
@@ -84,8 +78,7 @@ sample <- gBuffer(as_Spatial(pts),
 sample <- as(sample, "sf")
 
 par(mfrow=c(1,1))
-plot(mamm)
+plot(amph)
 plot(sample, add = TRUE) #; terra::area(sample[1])
-plot(ynp, add = TRUE) #; terra::area(as_Spatial(ynp))
-plot(pts, add = TRUE)
-
+crs(amph)
+crs(sample)
