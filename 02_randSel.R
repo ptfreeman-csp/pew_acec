@@ -62,11 +62,11 @@ pts = sf::st_sample(domain, size = n) ; str(pts)
 # 
 # #####################################################
 
-
-ggplot() + 
-  geom_sf(aes(), data=west) +
-  geom_sf(aes(), data=pts)
-
+# 
+# ggplot() + 
+#   geom_sf(aes(), data=west) +
+#   geom_sf(aes(), data=pts)
+# 
 
 # Grow buffer around each point to be same size as PA
 # ?gBuffer
@@ -77,8 +77,5 @@ sample <- gBuffer(as_Spatial(pts),
 
 sample <- as(sample, "sf")
 
-par(mfrow=c(1,1))
-plot(amph)
+
 plot(sample, add = TRUE) #; terra::area(sample[1])
-crs(amph)
-crs(sample)
