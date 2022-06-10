@@ -6,7 +6,8 @@
 ## Set working directory 
 setwd("G:/My Drive/2Pew ACEC/Pew_ACEC/")
 wd <- "G:/My Drive/2Pew ACEC/Pew_ACEC/"
-data.dir <- "G:/My Drive/2Pew ACEC/Pew_ACEC/data/" 
+data.dir <- "G:/My Drive/2Pew ACEC/Pew_ACEC/data/"
+loc.data.dir <- "C:/Users/clitt/OneDrive/Desktop/data_gen/spp/"
 
 
 
@@ -71,6 +72,7 @@ library(chemCal)
 
 
 
+par(mfrow=c(1,1))
 
 # rm(GCtorture)
 
