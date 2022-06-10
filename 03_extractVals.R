@@ -5,11 +5,10 @@
 # install.packages("exactextractr")
 library(exactextractr)
 
-samp_vals <- exact_extract(oilgas, sample, fun = "mean")
+samp_vals <- exact_extract(sage, sample, fun = "mean")
 min(samp_vals) ; max(samp_vals)
 hist(samp_vals)
-quantile(samp_vals)
-(aoi_vals <- exact_extract(oilgas, ls, fun = "mean"))
+(aoi_vals <- exact_extract(sage, ls, fun = "mean"))
 
 
 # Create empirical cumulative distribution function
