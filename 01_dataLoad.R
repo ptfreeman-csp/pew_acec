@@ -14,13 +14,12 @@ load_f <- function(f) {
   proj.crs <- "+proj=aea +lat_0=23 +lon_0=-96 +lat_1=29.5 +lat_2=45.5 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
   # proj.crs <- "+proj=aea +lat_0=0 +lon_0=0 +lat_1=29.5 +lat_2=45.5 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs"
   # proj.crs <- "+proj=aea +lat_0=37.5 +lon_0=-96 +lat_1=29.5 +lat_2=45.5 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs"
-  
-  
   read_sf(f) %>%
     st_transform(proj.crs) %>%
     st_make_valid() %>%
     st_buffer(dist = 0)
 }
+
 # proj.crs <- "+proj=longlat +datum=WGS84 +no_defs"
 proj.crs <- "+proj=aea +lat_0=23 +lon_0=-96 +lat_1=29.5 +lat_2=45.5 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
 # proj.crs <- "+proj=aea +lat_0=0 +lon_0=0 +lat_1=29.5 +lat_2=45.5 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs"
@@ -32,10 +31,10 @@ proj.crs <- "+proj=aea +lat_0=23 +lon_0=-96 +lat_1=29.5 +lat_2=45.5 +x_0=0 +y_0=
 
 # AOIs
 # Load Red Desert all designations removed
-load_f <- read_sf(paste0(data.dir,
+rd_desigx <- load_f(paste0(data.dir,
                            "RockSpringsFO_Wyo/RedDesert-LittleSandyLandscape/RD_IBA_EraseDesignations.shp"))
 # Load Red Desert all designations AND special mgmt area removed
-rd_allX <- load_f(paste0(data.dir,
+rd_allx <- load_f(paste0(data.dir,
                          "RockSpringsFO_Wyo/RedDesert-LittleSandyLandscape/RD_IBA_EraseAll.shp"))
 # Load Little Sandy
 ls <- load_f(paste0(data.dir,
@@ -53,12 +52,29 @@ wyo <- usa %>% filter(NAME == "Wyoming")
 remove(usa, keeps)
 
 
-# Load sagebrush biome
-sb <- load_f(paste0(data.dir,"source/US_Sagebrush_Biome_2019.shp"))
+# Load sagebrush biome; clip to west
+sb <- load_f(paste0(local.data.dir,"eco/US_Sagebrush_Biome_2019.shp")) %>% st_crop(west)
 
-# # Load blm
+
+# Load blm; convert to polygon using stars package
+# Ref: https://r-spatial.github.io/stars/
+# Ref: https://gis.stackexchange.com/questions/192771/how-to-speed-up-raster-to-polygon-conversion-in-r
+
 blm <- raster(paste0(data.dir, "working/blm_west.tif")) ; blm
 plot(blm)
+
+# This converts to polygon, and fixes various spatial issues (see links in setup)
+boo <- sf::as_Spatial(sf::st_as_sf(stars::st_as_stars(blm),
+                                   as_points = FALSE, merge = TRUE)) %>%
+  st_as_sf() %>%
+  st_make_valid() #%>%
+boo <- ensure_multipolygons(boo)
+sf::sf_use_s2(FALSE)
+boo <- boo %>% st_transform(proj.crs)
+boo <- boo %>% st_buffer(dist = 0)
+boo[boo$blm_west == 0,] <- NA # 0 = non-blm lands; set = NA
+# plot(boo)
+
 
 ######################################
 ## Load indicators
@@ -98,67 +114,55 @@ proj.crs <- "+proj=aea +lat_0=23 +lon_0=-96 +lat_1=29.5 +lat_2=45.5 +x_0=0 +y_0=
 (bird <- raster("bird.tif")) ; crs(bird) <- proj.crs
 (mamm <- raster("mamm.tif")) ; crs(mamm) <- proj.crs
 (rept <- raster("rept.tif")) ; crs(rept) <- proj.crs
-(impSpp <- raster("impSppNorm.tif")) ; #crs(impSpp) <- proj.crs
+(impSpp <- raster("impSppNorm.tif")) #; crs(impSpp) <- proj.crs
 
-# Alt: load originals, except that they're GIANT 
-# amph <- raster(paste0(loc.data.dir,"amphibian_richness_habitat30m.tif")) # %>% crop(west) %>% mask(west)
-# bird <- raster(paste0(loc.data.dir,"bird_richness_habitat30m.tif")) 
-# mamm <- raster(paste0(loc.data.dir,"mammal_richness_habitat30m.tif")) 
-# rept <- raster(paste0(loc.data.dir,"reptile_richness_habitat30m.tif")) 
 
-##########################################
-##########################################
-##########################################
-########## FIX ME ########################
-##########################################
-##########################################
-##########################################
 # Ecological connectivity, intactness, system div.
-# Sage/annHerb clipped to sagebrush biome b/c vals irrelevant elsewhere; 0-100 not 0-1
-
-########### WON'T WORK WITH SAMPLE ")) ###########
-(annHerb <- raster("annHerbNorm.tif"))  
-(sage <- raster("sageNorm.tif"))
-########### WON'T WORK WITH SAMPLE ")) ########### 
-
+# Sage/annHerb via GEE (clipped to sagebrush biome) weren't working. clipped to sagebrush biome b/c vals irrelevant elsewhere; 0-100 not 0-1
 (connect <- raster("connNorm.tif"))
 (intact <- raster("intactNorm.tif"))
 (ecosysRarity <- raster("ecorarityaggto270norm.tif"))
 (vegDiv <- raster("gapdiv270mnorm.tif"))
 
 
-samp_vals <- exact_extract(vegDiv, sample, fun = "mean") ; head(samp_vals)
+# Sage
+# RCMAP layers via GEE had goofy CRS. Went to source at SciBase (even tho 30m)
+# Both requisite layers for 2019 and 2020 errored,  hence using 2018.
+# Nb Should clip sample to sagebrush biome
+(sage <- raster(paste0(local.data.dir,"eco/Sagebrush_2009_2020/rcmap_sagebrush_2018.img")))
+(annHerb <- raster(paste0(local.data.dir,"eco/Annual_Herbaceous_2009_2020/rcmap_annual_herbaceous_2018.img")))
+
 
 # Clim
-climAcc <- raster("ClimAccNorm.tif") ; crs(climAcc)
-climStab <- raster("ClimStabNorm.tif") ; crs(climStab)
+(climAcc <- raster("ClimAccNorm.tif"))
+(climStab <- raster("ClimStabNorm.tif"))
 
 
 # Geophys
-geoDiv <- raster("div_ergo_lth270mnorm.tif") ; crs(geoDiv)
-geoRarity <- raster("georarity270mnorm.tif") ; crs(geoRarity)
+(geoDiv <- raster("div_ergo_lth270mnorm.tif"))
+(geoRarity <- raster("georarity270mnorm.tif"))
 
  
 # Water
-waterAvail <- raster("wateravail_allwater2.tif") ; crs(waterAvail)
-waterFut <- raster("wateruseddwaterdist2norm.tif") ; crs(waterFut)
+(waterAvail <- raster("wateravail_allwater2.tif"))
+(waterFut <- raster("wateruseddwaterdist2norm.tif"))
 
 
 # Nat res
-geotherm <- raster("geotherm_lt10pslop_nourbFWPAspldist.tif") ; crs(geotherm)
-oilGas <- raster("oilgas5k6cellmean270mnorm_PAs0UrbH20.tif") ; crs(oilGas)
-solar <- raster("maxdnighi_lt5pslope_ddpowerline4normPAs0UrbH20.tif") ; crs(solar)
-wind <- raster("windprobi_lt30pslope_ddpowerline4normPAs0UrbH20MULT.tif") ; crs(wind)
+(geotherm <- raster("geotherm_lt10pslop_nourbFWPAspldist.tif"))
+(oilGas <- raster("oilgas5k6cellmean270mnorm_PAs0UrbH20.tif"))
+(solar <- raster("maxdnighi_lt5pslope_ddpowerline4normPAs0UrbH20.tif"))
+(wind <- raster("windprobi_lt30pslope_ddpowerline4normPAs0UrbH20MULT.tif"))
 
 
 # Misc
-nightDark <- raster("virrs2011.tif") ; crs(nightDark)
-
-w1 <- load_f(paste0(data.dir,"source/WGFD_MuleDeerCorridorComplexes/MuleDeerMigrationBaggsWGFDCorridor.shp")) %>% as_Spatial()
-w2 <- load_f(paste0(data.dir,"source/WGFD_MuleDeerCorridorComplexes/MuleDeerMigrationPlatteValleyWGFDCorridor.shp")) %>% as_Spatial()
-w3 <- load_f(paste0(data.dir,"source/WGFD_MuleDeerCorridorComplexes/MuleDeerMigrationSubletteWGFDCorridor.shp")) %>% as_Spatial()
-wyoMule <- raster::bind(w1, w2, w3) %>% st_as_sf() %>% fasterize(amph) #%>% crop(wyo) %>% mask(wyo)
-remove(w1, w2, w3)
+(nightDark <- raster("virrs2011.tif")) 
+# Migraton routse -- maybe just overlay in report.
+# w1 <- load_f(paste0(data.dir,"source/WGFD_MuleDeerCorridorComplexes/MuleDeerMigrationBaggsWGFDCorridor.shp")) %>% as_Spatial()
+# w2 <- load_f(paste0(data.dir,"source/WGFD_MuleDeerCorridorComplexes/MuleDeerMigrationPlatteValleyWGFDCorridor.shp")) %>% as_Spatial()
+# w3 <- load_f(paste0(data.dir,"source/WGFD_MuleDeerCorridorComplexes/MuleDeerMigrationSubletteWGFDCorridor.shp")) %>% as_Spatial()
+# wyoMule <- raster::bind(w1, w2, w3) %>% st_as_sf() %>% fasterize(amph) #%>% crop(wyo) %>% mask(wyo)
+# remove(w1, w2, w3)
 
 setwd("G:/My Drive/2Pew ACEC/Pew_ACEC/")
 
