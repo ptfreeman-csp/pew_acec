@@ -2,20 +2,146 @@
 ## EXTRACT VALUES OF CONSERVATION INDICATORS TO SAMPLE ##
 #########################################################
 
-# install.packages("exactextractr")
-library(exactextractr)
+varsRasters <- list(amph,
+             bird,
+             mamm,
+             rept,
+             impSpp,
+             connect,
+             intact,
+             ecoRar,
+             vegDiv,
+             sage,
+             annHerb,
+             climAcc,
+             climStab,
+             geoDiv,
+             geoRar,
+             geotherm,
+             oilGas,
+             solar,
+             wind)
 
-samp_vals <- exact_extract(sage, sample, fun = "mean")
-min(samp_vals) ; max(samp_vals)
-hist(samp_vals)
-(aoi_vals <- exact_extract(sage, ls, fun = "mean"))
+aoisShapes <- list(rd_desigx,
+             rd_allx,
+             ls)
+
+aoisNames <- c("Red Desert - no desig",
+               "Red Desert - no desig nor spec mgmt",
+               "Little Sandy")
 
 
-# Create empirical cumulative distribution function
-d <- ecdf(samp_vals)
-d(min(samp_vals)) # Should be zero
-d(max(samp_vals)) # Should be one
-d(aoi_vals)
+# -----------------------------------------------------------------------------
+# Select size of random sample
+# n <- 1000
+n <- 100
+# n <- 10
 
-ecdf_fun <- function(x,perc) ecdf(x)(perc)
-ecdf_fun(samp_vals, aoi_vals)
+# Select domain for generating random sample
+domain <- west
+# domain <- blmWest %>% st_as_sf()
+# domain <- blmWyo
+# domain <- wyo %>% st_as_sf()
+
+# Empty vectors
+an <- NULL
+vn <- NULL
+av <- NULL
+sv <- NULL
+sv.medians <- NULL
+sv.means <- NULL
+pv <- NULL
+cv <- NULL
+ev <- NULL
+
+# Options for extracting rank/percentile:
+# Ref: https://stackoverflow.com/questions/41087162/calculate-a-percentile-of-dataframe-column-efficiently
+# Choosing percent rank in loop below, but could consider ecdf, here:
+# Define function for computing empirical cumulative distribution and querying val.
+# ecdf_fun <- function(x,perc) ecdf(x)(perc)
+# ecdf_fun(samp_vals, aoi_vals)
+
+for (i in 1:length(aoisShapes)){
+# for (i in 1){
+  a <- aoisShapes[[i]]
+  trgt_area <- terra::area(a, unit = "m")
+  pts = sf::st_sample(domain, size = n)
+  sample <- gBuffer(as_Spatial(pts),
+                    width = sqrt(trgt_area/(3.14)), # get radius
+                    byid = TRUE) %>% st_as_sf()
+  # for (j in 1:length(varsRasters)){
+  for (j in 1:3){
+    # Pull name of AOI and append to vector
+    an <- c(an, aoisNames[i])
+    # Pull name of variable and append to vector
+    vn <- c(vn, names(varsRasters[[j]]))
+    # Extract mean value of variable within AOI
+    av.temp <- exact_extract(varsRasters[[j]], a, fun = "mean")
+    # Append that value to vector
+    av <- c(av, av.temp)
+    # Extract mean values of variable for all random sample points; as vector
+    sv.temp <- exact_extract(varsRasters[[j]], sample, fun = "mean") %>% round(2)
+    # Get average across all random samples
+    sv.mean <- mean(sv.temp) %>% round(2)
+    # Get median across all random samples
+    sv.median <- median(sv.temp) %>% round(2)
+    # Bind those vectors.
+    sv <- rbind(sv, sv.temp)
+    # Bind those means
+    sv.means <- c(sv.means, sv.mean)
+    # Bind those medians
+    sv.medians <- c(sv.medians, sv.median)
+    # Extract perc rank of the aoi value relative to all sample values (first one)
+    pv.temp <- percent_rank(c(av.temp, sv.temp))[1] %>% round(2)
+    # Extract cumulative dist rank
+    cv.temp <- cume_dist(c(av.temp, sv.temp))[1] %>% round(2)
+    # Create empirical cumulative distribution function from those sample values
+    ef <- ecdf(sv.temp)
+    # # Extract the percentile of the AOI value within that distribution
+    ev.temp <- ef(av)
+    # Append those percentiles to a vector
+    pv <- c(pv, pv.temp)
+    cv <- c(cv, cv.temp)
+    ev <- c(ev, ev.temp)
+    
+  }
+}
+
+
+# an
+# vn
+# av
+# sv.temp
+# sv
+# sv.means
+# sv.medians
+# pv
+
+
+foo <- cbind(an, vn, av, sv.means, sv.medians, pv, cv, sv)
+view(foo)
+
+
+
+
+
+##########################################
+## CALC AREAS IN MIGRATION ROUTES & IBA ##
+##########################################
+
+# Area in square m in all Wyo; nb can't set km in area()
+migrArea <- terra::area(migr) %>% sum()#/1000000
+ibaArea <- terra::area(iba) %>% sum()#/1000000
+
+migrAreaAoi <- st_as_sf(migr) %>% st_crop(aoi) %>%
+  as_Spatial() %>%terra::area() %>% sum()#/1000000
+ibaAreaAoi <- st_as_sf(iba) %>% st_crop(aoi) %>%
+  as_Spatial() %>% terra::area() %>% sum()#/1000000
+
+migrPercAoi <- migrAreaAoi/migrArea
+ibaPercAoi <- ibaAreaAoi/ibaArea
+
+aoiArea <- aoi %>% terra::area() %>% sum()#/1000000
+wyoArea <- wyo %>%  terra::area() %>% sum()#/1000000
+
+aoiPercWyo <- aoiArea/wyoArea
