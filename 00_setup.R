@@ -7,13 +7,14 @@
 setwd("G:/My Drive/2Pew ACEC/Pew_ACEC/")
 wd <- "G:/My Drive/2Pew ACEC/Pew_ACEC/"
 data.dir <- "G:/My Drive/2Pew ACEC/Pew_ACEC/data/"
-loc.data.dir <- "C:/Users/clitt/OneDrive/Desktop/data_gen/spp/"
+local.data.dir <- "C:/Users/clitt/OneDrive/Desktop/data_gen/"
+out.dir <- "G:/My Drive/2Pew ACEC/Pew_ACEC/analyses/output"
 
 
 
 #####################################
 # Install packages if not already installed
-required.packages <- c("plyr", "ggplot2", "gridExtra", "terra", "raster", "sf", "rgdal", "dplyr",
+required.packages <- c("plyr", "ggplot2", "gridExtra", "terra", "raster", "sf", "stars", "rgdal", "dplyr",
                        "tidyverse", "maptools", "rgeos", 
                        "partykit", "vcd", "maps", "mgcv", "tmap",
                        "MASS", "pROC", "ResourceSelection", "caret", "broom", "boot",
@@ -32,6 +33,7 @@ library(terra)
 library(raster)
 # library(sp)
 library(sf)
+library(stars)
 library(rgdal)
 
 # Please note that rgdal will be retired by the end of 2023,
@@ -76,14 +78,27 @@ par(mfrow=c(1,1))
 
 # rm(GCtorture)
 
+# # # ref: https://gis.stackexchange.com/questions/389814/r-st-centroid-geos-error-unknown-wkb-type-12
+install.packages("gdalUtilities")
+library(gdalUtilities)
+
+ensure_multipolygons <- function(X) {
+  tmp1 <- tempfile(fileext = ".gpkg")
+  tmp2 <- tempfile(fileext = ".gpkg")
+  st_write(X, tmp1)
+  ogr2ogr(tmp1, tmp2, f = "GPKG", nlt = "MULTIPOLYGON")
+  Y <- st_read(tmp2)
+  st_sf(st_drop_geometry(X), geom = st_geometry(Y))
+}
+
+
+# https://stackoverflow.com/questions/68478179/how-to-resolve-spherical-geometry-failures-when-joining-spatial-data
+# sf::sf_use_s2(FALSE)
+
 #####################################
 # Turn off scientific notation
 options(scipen=999) 
 
-
-#####################################
-# Grab date for saving files
-currentDate <- Sys.Date()
 
 
 #####################################
@@ -212,6 +227,19 @@ display.brewer.pal(8, "RdYlBu")
 palette <- brewer.pal(8, "Dark2")
 palette <- brewer.pal(8, "Set2")
 palette <- brewer.pal(8, "RdYlBu")
+
+
+
+
+#####################################
+# Grab date for saving files
+currentDate <- Sys.Date()
+
+
+today <- paste0(mid(Sys.Date(),3,2),
+                mid(Sys.Date(),6,2),
+                mid(Sys.Date(),9,2))
+
 
 
 
