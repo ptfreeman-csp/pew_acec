@@ -22,6 +22,11 @@ varsRasters <- list(amph,
              solar,
              wind)
 
+namesRasters <- c("amph", "bird", "mamm", "rept", "impSpp", "connect",
+                  "intact", "ecoRar", "vegDiv", "sage", "annHerb",
+                  "climAcc", "climStab", "geoDiv", "geoRar",
+                  "geotherm", "oilGas", "solar", "wind")
+
 aoisShapes <- list(rd_desigx,
              rd_allx,
              ls)
@@ -30,11 +35,12 @@ aoisNames <- c("Red Desert - no desig",
                "Red Desert - no desig nor spec mgmt",
                "Little Sandy")
 
+FO <- "RockSprings-WYO"
 
 # -----------------------------------------------------------------------------
 # Select size of random sample
-# n <- 1000
-n <- 100
+n <- 1000
+# n <- 100
 # n <- 10
 
 # Select domain for generating random sample
@@ -69,12 +75,15 @@ for (i in 1:length(aoisShapes)){
   sample <- gBuffer(as_Spatial(pts),
                     width = sqrt(trgt_area/(3.14)), # get radius
                     byid = TRUE) %>% st_as_sf()
-  # for (j in 1:length(varsRasters)){
-  for (j in 1:3){
+  for (j in 1:length(varsRasters)){
+  # for (j in 2:8){
     # Pull name of AOI and append to vector
     an <- c(an, aoisNames[i])
+    print(aoisNames[i])
     # Pull name of variable and append to vector
-    vn <- c(vn, names(varsRasters[[j]]))
+    vn <- c(vn, namesRasters[j])
+    print(namesRasters[j])
+    # vn <- c(vn, names(varsRasters[[j]]))
     # Extract mean value of variable within AOI
     av.temp <- exact_extract(varsRasters[[j]], a, fun = "mean")
     # Append that value to vector
@@ -82,9 +91,9 @@ for (i in 1:length(aoisShapes)){
     # Extract mean values of variable for all random sample points; as vector
     sv.temp <- exact_extract(varsRasters[[j]], sample, fun = "mean") %>% round(2)
     # Get average across all random samples
-    sv.mean <- mean(sv.temp) %>% round(2)
+    sv.mean <- mean(sv.temp, na.rm = TRUE) %>% round(2)
     # Get median across all random samples
-    sv.median <- median(sv.temp) %>% round(2)
+    sv.median <- median(sv.temp, na.rm = TRUE) %>% round(2)
     # Bind those vectors.
     sv <- rbind(sv, sv.temp)
     # Bind those means
@@ -98,7 +107,7 @@ for (i in 1:length(aoisShapes)){
     # Create empirical cumulative distribution function from those sample values
     ef <- ecdf(sv.temp)
     # # Extract the percentile of the AOI value within that distribution
-    ev.temp <- ef(av)
+    ev.temp <- ef(av.temp) %>% round(2)
     # Append those percentiles to a vector
     pv <- c(pv, pv.temp)
     cv <- c(cv, cv.temp)
@@ -118,16 +127,21 @@ for (i in 1:length(aoisShapes)){
 # pv
 
 
-foo <- cbind(an, vn, av, sv.means, sv.medians, pv, cv, sv)
+foo <- cbind(an, vn, av, sv.means, sv.medians, pv, cv, ev, sv)
 view(foo)
 
-
+v <- 1
+# v <- v+1
+version <- paste0("ver",v)
+write.csv(foo, paste0(out.dir, FO, "_aoi_vs_sample_percentiles_", domain, n,"_", today, version, ".csv"))
 
 
 
 ##########################################
 ## CALC AREAS IN MIGRATION ROUTES & IBA ##
 ##########################################
+
+# Alt: could do extract val and take sum of pixels (0 or 1) for aoi and samples.
 
 # Area in square m in all Wyo; nb can't set km in area()
 migrArea <- terra::area(migr) %>% sum()#/1000000
