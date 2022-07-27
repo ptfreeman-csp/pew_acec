@@ -8,9 +8,8 @@ today <- paste0(mid(Sys.Date(),3,2),
 ## CREATE INDICATOR FIGURES FOR REPORT ##
 #########################################
 
-## Load csvs with raw results
+## Load csvs with raw results --------------------------------------------------
 
-# Load directly
 # data <- read.csv(paste0(out.dir, "Lewistown-MT_aoi_vs_sample_percentiles_220725_v7.csv")) %>%
 #   dplyr::select(an, dn, nv, vn, pv)
 
@@ -18,6 +17,8 @@ data <- read.csv(paste0(out.dir, "RockSprings-WYO_aoi_vs_sample_percentiles_2207
   dplyr::select(an, dn, nv, vn, pv)
 
 
+
+## Assign categories/labels ----------------------------------------------------
 
 # Assign value/threat
 threats <- c("annHerb", "geotherm", "wind", "solar", "mineral", "oilGas")
@@ -90,7 +91,7 @@ col_threat <- c("#c81e43",
 "#efcfd6")
 
 
-
+## Select AOI/sampling domain combo (one of each!!) ---------------------------
 
 # Filter data to given AOI and sampling domain
 sel <- data %>%
@@ -116,7 +117,10 @@ sel$variable <- factor(sel$variable, levels = sel$variable, ordered = TRUE)
 sel <- sel %>%
   mutate(color = ifelse(sel$type == "value", rev(col_value), rev(col_threat)))
 
-# Plot
+
+
+## Plot & save ----------------------------------------------------------------
+
 # p <- sel %>%
 p <- sel[12:20,] %>% # top 8 (in oppo order)
   # group_by(an) %>% # defines as grouped df
@@ -153,4 +157,3 @@ ggsave(paste0(out.dir, "top8_", sel$an[1], "_", sel$dn[1], "_n", sel$n[1], "_", 
 dev.off()
 
 
-# https://github.com/CaitLittlef/tws_castner_maps/blob/main/02_extractVals.R
