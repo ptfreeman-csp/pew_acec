@@ -2,3 +2,9 @@
 .Rhistory
 .RData
 .Ruserdata
+z00_setup.R
+z01_dataLoad.R
+z02_randSel.R
+z03_extractVals.R
+z04_indicatorFigs.R
+z02_randSel.v2.R
