@@ -12,13 +12,15 @@ today <- paste0(mid(Sys.Date(),3,2),
 varsRasters <- list(amph, bird, mamm, rept, impSpp, connect,
                     intact, ecoRar, vegDiv, sage, annHerb,
                     climAcc, climStab, geoDiv, geoRar,
-                    geotherm, oilGas, mineral, solar, wind, nightDark)
+                    geotherm, oilGas, mineral, solar, wind,
+                    nightDark)
 
 
 namesRasters <- c("amph", "bird", "mamm", "rept", "impSpp", "connect",
                   "intact", "ecoRar", "vegDiv", "sage", "annHerb",
                   "climAcc", "climStab", "geoDiv", "geoRar",
-                  "geotherm", "oilGas", "mineral", "solar", "wind", "nightDark")
+                  "geotherm", "oilGas", "mineral", "solar", "wind",
+                  "nightDark")
 
 
 
@@ -53,7 +55,7 @@ dNames <- c("west",
 ## Sample size selection to match domains -------------------------------------
 
 ns <- c(2000, 2000, 500, 500)
-# ns <- c(26, 26, 24, 24)
+# ns <- c(25, 25, 25, 25)
 
 
 ## AOI selection --------------------------------------------------------------
