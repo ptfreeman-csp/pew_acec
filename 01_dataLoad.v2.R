@@ -31,22 +31,14 @@ proj.crs <- "+proj=aea +lat_0=23 +lon_0=-96 +lat_1=29.5 +lat_2=45.5 +x_0=0 +y_0=
 
 #-------------------------------------------------------------------------------
 ## Load AOIs
-# Load Red Desert all designations removed
-rd_desigx <- load_f(paste0(data.dir,
-                           "RockSpringsFO_Wyo/RedDesert-LittleSandyLandscape/RD_IBA_EraseDesignations.shp")) %>%
-  as_Spatial()
 
-# Load Red Desert all designations AND special mgmt area removed
-rd_allx <- load_f(paste0(data.dir,
-                         "RockSpringsFO_Wyo/RedDesert-LittleSandyLandscape/RD_IBA_EraseAll.shp")) %>%
-  as_Spatial()
 
-# Load Red Desert all designations AND special mgmt area removed AND other areas
+# Rock Springs Wyo: Red Desert all designations AND special mgmt area removed AND other areas 
 rd_allx <- load_f(paste0(data.dir,
                          "RockSpringsFO_Wyo/RedDesert-LittleSandyLandscape/RD_IBA_EraseAll2.shp")) %>%
   as_Spatial()
 
-# Load Little Sandy
+# Rock Springs Wyo: Little Sandy
 ls <- load_f(paste0(data.dir,
                     "RockSpringsFO_Wyo/RedDesert-LittleSandyLandscape/RD_LS_IBA_RSFO - Copy.shp")) %>%
   filter(SITE_NAME == "Little Sandy Landscape") %>%
@@ -76,7 +68,7 @@ remove(usa, keeps)
 
 #-------------------------------------------------------------------------------
 # Load sagebrush biome; clip to west
-sb <- load_f(paste0(local.data.dir,"eco/US_Sagebrush_Biome_2019.shp")) %>% st_crop(west)
+# sb <- load_f(paste0(local.data.dir,"eco/US_Sagebrush_Biome_2019.shp")) %>% st_crop(west)
 
 
 
