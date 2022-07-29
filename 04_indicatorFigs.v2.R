@@ -21,7 +21,7 @@ data <- read.csv(paste0(out.dir, "RockSprings-WYO_aoi_vs_sample_percentiles_2207
 ## Assign categories/labels ----------------------------------------------------
 
 # Assign value/threat
-threats <- c("annHerb", "geotherm", "wind", "solar", "mineral", "oilGas")
+threats <- c("annHerb", "geotherm", "wind", "solar", "mineral", "oilGas", "waterFut")
 data <- data %>%
   mutate(type = ifelse(vn %in% threats, "threat", "value"))
 
@@ -29,7 +29,8 @@ data <- data %>%
 lu <- data.frame(layer = c("amph", "bird", "mamm", "rept", "impSpp", "connect",
                            "intact", "ecoRar", "vegDiv", "sage", "annHerb",
                            "climAcc", "climStab", "geoDiv", "geoRar",
-                           "geotherm", "oilGas", "mineral", "solar", "wind", "nightDark"),
+                           "geotherm", "oilGas", "mineral", "solar", "wind",
+                           "waterAvail", "waterFut", "nightDark"),
                  variable = c("Amphibian species richness", "Bird species richness",
                               "Mammal species richness", "Reptile species richness",
                               "Imperiled species richness", "Ecological connectivity",
@@ -40,6 +41,7 @@ lu <- data.frame(layer = c("amph", "bird", "mamm", "rept", "impSpp", "connect",
                               "Geophysical rarity", "Geothermal resource potential",
                               "Oil and gas resource potential", "Mineral resource potential",
                               "Solar resource potential", "Wind resource potential",
+                              "Water availability", "Future water withdrawals",
                               "Night sky darkness"))
 
 data <- data %>% left_join(lu, by = c("vn" = "layer"))
