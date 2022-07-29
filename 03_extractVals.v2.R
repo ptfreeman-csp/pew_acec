@@ -94,6 +94,8 @@ ev <- as.numeric()
 # ecdf_fun <- function(x,perc) ecdf(x)(perc)
 # ecdf_fun(samp_vals, aoi_vals)
 
+# FIXME (possibly):
+# Consider hard-wiring random sample for reproducibility via set.seed()
 
 start <- Sys.time()
 # Work thru each of the AOIs
