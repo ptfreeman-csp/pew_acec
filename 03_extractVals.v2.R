@@ -13,43 +13,43 @@ varsRasters <- list(amph, bird, mamm, rept, impSpp, connect,
                     intact, ecoRar, vegDiv, sage, annHerb,
                     climAcc, climStab, geoDiv, geoRar,
                     geotherm, oilGas, mineral, solar, wind,
-                    nightDark)
+                    waterAvail, waterFut, nightDark)
 
 
 namesRasters <- c("amph", "bird", "mamm", "rept", "impSpp", "connect",
                   "intact", "ecoRar", "vegDiv", "sage", "annHerb",
                   "climAcc", "climStab", "geoDiv", "geoRar",
                   "geotherm", "oilGas", "mineral", "solar", "wind",
-                  "nightDark")
+                  "waterAvail", "waterFut", "nightDark")
 
 
 
 ## Field office selection --------------------------------------------------------------
 
-FO <- "RockSprings-WYO"
-# FO <- "Lewistown-MT"
+# FO <- "RockSprings-WYO"
+FO <- "Lewistown-MT"
 
 
 
 ## Domain selection -----------------------------------------------------------
 
-domains <- list(st_as_sf(west),
-                blmWest,
-                st_as_sf(wyo),
-                blmWyo)
-dNames <- c("west",
-            "blmWest",
-            "wyo",
-            "blmWyo")
-
 # domains <- list(st_as_sf(west),
 #                 blmWest,
-#                 st_as_sf(mt),
-#                 blmMT)
+#                 st_as_sf(wyo),
+#                 blmWyo)
 # dNames <- c("west",
 #             "blmWest",
-#             "MT",
-#             "blmMT")
+#             "wyo",
+#             "blmWyo")
+
+domains <- list(st_as_sf(west),
+                blmWest,
+                st_as_sf(mt),
+                blmMT)
+dNames <- c("west",
+            "blmWest",
+            "MT",
+            "blmMT")
 
 
 ## Sample size selection to match domains -------------------------------------
@@ -60,14 +60,14 @@ ns <- c(2000, 2000, 500, 500)
 
 ## AOI selection --------------------------------------------------------------
 
-aoisShapes <- list(rd_allx, ls)
-aoisNames <- c(
-  "Red Desert",
-  "Little Sandy"
-)
+# aoisShapes <- list(rd_allx, ls)
+# aoisNames <- c(
+#   "Red Desert",
+#   "Little Sandy"
+# )
 
-# aoisShapes <- list(lewis)
-# aoisNames <- c("lewis")
+aoisShapes <- list(lewis)
+aoisNames <- c("lewis")
 
 
 ## Loop to extract values------------------------------------------------------
@@ -109,7 +109,7 @@ for (i in 1:length(aoisShapes)){
     pts = sf::st_sample(domains[[j]], size = ns[j])
     # Grow those sample points to match AOI area.
     sample <- gBuffer(as_Spatial(pts),
-                    width = sqrt(trgt_area/(3.14)), # grow by AOI area's radius
+                    width = sqrt(trgt_area/(3.14)), # grow by AOI radius
                     byid = TRUE) %>% st_as_sf()
     # Work thru each of the indicator rasters, extracting values
     for (k in 1:length(varsRasters)){
