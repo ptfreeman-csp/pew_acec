@@ -119,6 +119,7 @@ setwd("G:/My Drive/2Pew ACEC/Pew_ACEC/data/working")
 # Load and process spp richness. These are orig from:
 # https://www.sciencebase.gov/catalog/item/5bef2935e4b045bfcadf732c
 # See notes at bottom re: mis-matched CRS from GEE.
+# Only amph is given as an eample below, but did amph, bird, mamm, rept.
 # 
 # start <- Sys.time()
 # (amph_west <- raster(paste0(local.data.dir,
@@ -130,42 +131,6 @@ setwd("G:/My Drive/2Pew ACEC/Pew_ACEC/data/working")
 # writeRaster(amph_west_270m, "amph_west_270m.tif", overwrite = TRUE)
 # (end <- start - Sys.time())
 
-
-# start <- Sys.time()
-# (bird_west <- raster(paste0(local.data.dir,
-#                             "spp/bird_richness_habitat30m.tif")) %>% crop(west) %>% mask(west))
-# # writeRaster(bird_west, "bird_west.tif", overwrite = TRUE)
-# (end <- start - Sys.time())
-# start <- Sys.time()
-# bird_west_270m <- bird_west %>% aggregate(fact = 9, fun = mean)
-# writeRaster(bird_west_270m, "bird_west_270m.tif", overwrite = TRUE)
-# (end <- start - Sys.time())
-
-
-# start <- Sys.time()
-# (mamm_west <- raster(paste0(local.data.dir,
-#                             "spp/mammal_richness_habitat30m.tif")) %>% crop(west) %>% mask(west))
-# # writeRaster(mamm_west, "mamm_west.tif", overwrite = TRUE)
-# (end <- start - Sys.time())
-# start <- Sys.time()
-# mamm_west_270m <- mamm_west %>% aggregate(fact = 9, fun = mean)
-# (end <- start - Sys.time())
-# start <- Sys.time()
-# writeRaster(mamm_west_270m, "mamm_west_270m.tif", overwrite = TRUE)
-# (end <- start - Sys.time())
-# 
-#  
-# start <- Sys.time()
-# (rept_west <- raster(paste0(local.data.dir,
-#                             "spp/reptile_richness_habitat30m.tif")) %>% crop(west) %>% mask(west))
-# # writeRaster(rept_west, "rept_west.tif", overwrite = TRUE)
-# (end <- start - Sys.time())
-# start <- Sys.time()
-# rept_west_270m <- rept_west %>% aggregate(fact = 9, fun = mean)
-# writeRaster(rept_west_270m, "rept_west_270m.tif", overwrite = TRUE)
-# (end <- start - Sys.time())
-
-## -----------------------------------------
 
 (amph <- raster("amph_west_270m.tif")) 
 (bird <- raster("bird_west_270m.tif"))
