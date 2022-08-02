@@ -26,30 +26,30 @@ namesRasters <- c("amph", "bird", "mamm", "rept", "impSpp", "connect",
 
 ## Field office selection --------------------------------------------------------------
 
-# FO <- "RockSprings-WYO"
-FO <- "Lewistown-MT"
+FO <- "RockSprings-WYO"
+# FO <- "Lewistown-MT"
 
 
 
 ## Domain selection -----------------------------------------------------------
 
-# domains <- list(st_as_sf(west),
-#                 blmWest,
-#                 st_as_sf(wyo),
-#                 blmWyo)
-# dNames <- c("west",
-#             "blmWest",
-#             "wyo",
-#             "blmWyo")
-
 domains <- list(st_as_sf(west),
                 blmWest,
-                st_as_sf(mt),
-                blmMT)
+                st_as_sf(wyo),
+                blmWyo)
 dNames <- c("west",
             "blmWest",
-            "MT",
-            "blmMT")
+            "wyo",
+            "blmWyo")
+
+# domains <- list(st_as_sf(west),
+#                 blmWest,
+#                 st_as_sf(mt),
+#                 blmMT)
+# dNames <- c("west",
+#             "blmWest",
+#             "MT",
+#             "blmMT")
 
 
 ## Sample size selection to match domains -------------------------------------
@@ -60,14 +60,14 @@ ns <- c(2000, 2000, 500, 500)
 
 ## AOI selection --------------------------------------------------------------
 
-# aoisShapes <- list(rd_allx, ls)
-# aoisNames <- c(
-#   "Red Desert",
-#   "Little Sandy"
-# )
+aoisShapes <- list(rd_allx, ls)
+aoisNames <- c(
+  "Red Desert",
+  "Little Sandy"
+)
 
-aoisShapes <- list(lewis)
-aoisNames <- c("lewis")
+# aoisShapes <- list(lewis)
+# aoisNames <- c("lewis")
 
 
 ## Loop to extract values------------------------------------------------------
