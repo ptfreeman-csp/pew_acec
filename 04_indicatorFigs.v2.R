@@ -10,11 +10,11 @@ today <- paste0(mid(Sys.Date(),3,2),
 
 ## Load csvs with raw results --------------------------------------------------
 
-# data <- read.csv(paste0(out.dir, "Lewistown-MT_aoi_vs_sample_percentiles_220725_v7.csv")) %>%
-#   dplyr::select(an, dn, nv, vn, pv)
+data <- read.csv(paste0(out.dir, "Lewistown-MT_aoi_vs_sample_percentiles_220729_v1.csv")) %>%
+dplyr::select(an, dn, nv, vn, pv)
 
-data <- read.csv(paste0(out.dir, "RockSprings-WYO_aoi_vs_sample_percentiles_220727_v1.csv")) %>%
-  dplyr::select(an, dn, nv, vn, pv)
+# data <- read.csv(paste0(out.dir, "RockSprings-WYO_aoi_vs_sample_percentiles_220729_v1.csv")) %>%
+#   dplyr::select(an, dn, nv, vn, pv)
 
 
 
@@ -50,47 +50,55 @@ data <- data %>% left_join(lu, by = c("vn" = "layer"))
 # Pull colors for green (Value) and red (threat) gradients
 # Source: https://colordesigner.io/gradient-generator
 # Define list of colors (trial and error showed reverse necessary)
-col_value <- c("#056e4f",
-"#187556",
-"#257b5e",
-"#318266",
-"#3b886d",
-"#458f75",
-"#4e967d",
-"#589c84",
-"#61a38c",
-"#6aaa94",
-"#73b19c",
-"#7db7a4",
-"#86beac",
-"#8fc5b4",
-"#99ccbc",
-"#a2d3c4",
-"#acdacc",
-"#b6e1d4",
-"#bfe8dc",
-"#c9efe4")
+# Length for EACH must match # of indicators
+col_value <- c("#056e4f", # dark green
+               "#167455",
+               "#22795c",
+               "#2c7f62",
+               "#358569",
+               "#3e8a70",
+               "#469076",
+               "#4f967d",
+               "#579c84",
+               "#5fa18a",
+               "#67a791",
+               "#6fad98",
+               "#77b39f",
+               "#7fb9a6",
+               "#87bfad",
+               "#8fc5b3",
+               "#97cbba",
+               "#9fd1c1",
+               "#a8d7c8",
+               "#b0ddcf",
+               "#b8e3d6",
+               "#c1e9dd",
+"#c9efe4") # light green
 
-col_threat <- c("#c81e43",
-"#cc2d4b",
-"#cf3a53",
-"#d2445c",
-"#d54f64",
-"#d8586c",
-"#db6174",
-"#dd6a7c",
-"#e07384",
-"#e27c8c",
-"#e48494",
-"#e68d9c",
-"#e795a3",
-"#e99eab",
-"#eaa6b2",
-"#ebaeba",
-"#ecb6c1",
-"#edbfc8",
-"#eec7cf",
-"#efcfd6")
+col_threat <- c("#c81e43", #dark red
+               "#cb2b4a",
+               "#ce3651",
+               "#d14058",
+               "#d4495f",
+               "#d65266",
+               "#d95a6d",
+               "#db6274",
+               "#dd6a7b",
+               "#df7182",
+               "#e17989",
+               "#e38090",
+               "#e58797",
+               "#e68f9d",
+               "#e796a4",
+               "#e99dab",
+               "#eaa4b1",
+               "#ebabb7",
+               "#ecb3be",
+               "#edbac4",
+               "#eec1ca",
+               "#eec8d0",
+"#efcfd6") #light red
+
 
 
 ## Select AOI/sampling domain combo (one of each!!) ---------------------------
@@ -98,15 +106,15 @@ col_threat <- c("#c81e43",
 # Filter data to given AOI and sampling domain
 sel <- data %>%
   filter(
-         an == "Little Sandy",
+         # an == "Little Sandy",
          # an == "Red Desert",
-         # an == "lewis",
+         an == "lewis",
          # dn == "west"
          # dn == "blmWest"
          # dn == "wyo"
          # dn == "MT"
-         dn == "blmWyo"
-         # dn == "blmMT"
+         # dn == "blmWyo"
+         dn == "blmMT"
          )
 
 # Order data by percentile ranks (greatest first)
@@ -119,19 +127,20 @@ sel$variable <- factor(sel$variable, levels = sel$variable, ordered = TRUE)
 sel <- sel %>%
   mutate(color = ifelse(sel$type == "value", rev(col_value), rev(col_threat)))
 
+# Retain only top 8; don't hard-wire with index, use tail()!
+sel <- sel %>% tail(8) #(tail b/c pv are in oppo order)
 
 
 ## Plot & save ----------------------------------------------------------------
 
-# p <- sel %>%
-p <- sel[12:20,] %>% # top 8 (in oppo order)
+p <- sel %>%
   # group_by(an) %>% # defines as grouped df
   # arrange(desc(pv), .by_group = TRUE) %>% # sorts & remembers the grp
   ggplot(aes(x = variable, y = pv*100,
              fill = variable)) +
   geom_bar(stat = "identity") +
   # scale_fill_manual(values = sel$color) +
-  scale_fill_manual(values = sel$color[12:20]) +
+  scale_fill_manual(values = sel$color) +
   coord_flip() +
   # theme_bw() +
   # theme_classic() +
