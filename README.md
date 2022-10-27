@@ -1,13 +1,11 @@
----
-output:
-  html_document: default
-  word_document: default
-  pdf_document: default
----
 ## Ecological values of candidate Areas of Critical Environmental Concern
 ### Analytical workflow
 #### Conservation Science Partners
 #### Caitlin Littlefield (caitlin@csp-inc.org)
+
+#### EVERYTHING BELOW HERE NEEDS UPDATING ####
+
+
 
 This project consists of two highly interrelated components. In Part 1, we quantified the ecological value of USFS National Forest lands at the administrative unit level by bringing together several key ecological and environmental indicators and integrating them into a composite index of ecological value. This index provides a single coherent estimate of ecological value for each location within all National Forest boundaries, which is then summarized at the administrative unit level. In Part 2, we use the composite index layer generated in Part 1 to identify High Ecological Value Areas (HEVAs) within individual National Forest units. HEVAs are contiguous areas with land in the top 10% of ecological value for a given National Forest. Full methodological details are provided in the Technical Report documents for Part 1 (Administrative Unit analysis) and Part 2 (individual forest analyses)
 
