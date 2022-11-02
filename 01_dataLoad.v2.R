@@ -10,45 +10,17 @@
 #-------------------------------------------------------------------------------
 ## Function to load features, set common crs, and fix any invalid geometries
 load_f <- function(f) {
-  # proj.crs <- "+proj=longlat +datum=WGS84 +no_defs"
-  # Setting below and assigning this to spp richness rasters is the only way to get them to line-up!
   proj.crs <- "+proj=aea +lat_0=23 +lon_0=-96 +lat_1=29.5 +lat_2=45.5 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
-  # proj.crs <- "+proj=aea +lat_0=0 +lon_0=0 +lat_1=29.5 +lat_2=45.5 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs"
-  # proj.crs <- "+proj=aea +lat_0=37.5 +lon_0=-96 +lat_1=29.5 +lat_2=45.5 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs"
   read_sf(f) %>%
     st_transform(proj.crs) %>%
     st_make_valid() %>%
     st_buffer(dist = 0)
 }
 
-# proj.crs <- "+proj=longlat +datum=WGS84 +no_defs"
 proj.crs <- "+proj=aea +lat_0=23 +lon_0=-96 +lat_1=29.5 +lat_2=45.5 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
-# proj.crs <- "+proj=aea +lat_0=0 +lon_0=0 +lat_1=29.5 +lat_2=45.5 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs"
-# proj.crs <- "+proj=aea +lat_0=37.5 +lon_0=-96 +lat_1=29.5 +lat_2=45.5 +x_0=0 +y_0=0 +datum=NAD83 +units=m"
 
 
 
-
-#-------------------------------------------------------------------------------
-## Load AOIs
-
-
-# Rock Springs Wyo: Red Desert all designations AND special mgmt area removed AND other areas 
-rd_allx <- load_f(paste0(data.dir,
-                         "RockSpringsFO_Wyo/RedDesert-LittleSandyLandscape/RD_IBA_EraseAll2.shp")) %>%
-  as_Spatial()
-
-# Rock Springs Wyo: Little Sandy
-ls <- load_f(paste0(data.dir,
-                    "RockSpringsFO_Wyo/RedDesert-LittleSandyLandscape/RD_LS_IBA_RSFO - Copy.shp")) %>%
-  filter(SITE_NAME == "Little Sandy Landscape") %>%
-  as_Spatial()
-
-# Lewistown MT
-lewis <- load_f(paste0(data.dir, "LewistownFO_MT/Lewistown ACEC files/Priority Sage-Grouse Habitat/Lewistown_GreaterSageGrouse_PriorityHabitat.shp")) %>%
-  as_Spatial() %>%
-  aggregate() #%>%
-  
 
 
 #-------------------------------------------------------------------------------
@@ -109,6 +81,38 @@ blmWest <- load_f(paste0(data.dir, "working/blm_west.shp"))
 blmWyo <- load_f(paste0(data.dir,"working/blm_wyo.shp"))
 blmMT <- load_f(paste0(data.dir, "working/blm_mt.shp"))
 
+
+
+#-------------------------------------------------------------------------------
+## Load AOIs
+
+
+# Rock Springs Wyo: Red Desert all designations AND special mgmt area removed AND other areas
+rd_allx <- load_f(paste0(data.dir,
+                         "RockSpringsFO_Wyo/RedDesert-LittleSandyLandscape/RD_IBA_EraseAll2.shp")) %>%
+  as_Spatial()
+
+# Rock Springs Wyo: Little Sandy
+ls <- load_f(paste0(data.dir,
+                    "RockSpringsFO_Wyo/RedDesert-LittleSandyLandscape/RD_LS_IBA_RSFO - Copy.shp")) %>%
+  filter(SITE_NAME == "Little Sandy Landscape") %>%
+  as_Spatial()
+
+# shapefile(rd_allx, paste0(data.dir, "RockSpringsFO_Wyo/RedDesert-LittleSandyLandscape/red_desert_final.shp"))
+# shapefile(ls, paste0(data.dir, "RockSpringsFO_Wyo/RedDesert-LittleSandyLandscape/little_sandy_final.shp"))
+
+
+
+# Lewistown MT (only retain BLM areas within priortiy sage grouse habitat)
+# lewis <- load_f(paste0(data.dir, "LewistownFO_MT/Lewistown ACEC files/Priority Sage-Grouse Habitat/Lewistown_GreaterSageGrouse_PriorityHabitat.shp")) %>%
+#   as_Spatial() %>%
+#   aggregate() #%>%
+# lewis <- blmMT %>% st_intersection(st_as_sf(lewis)) %>%
+#   as_Spatial()
+# shapefile(lewis, paste0(data.dir,"LewistownFO_MT/blm_in_lewistown_prioritySG.shp"))
+# lewis <- load_f(paste0(data.dir,"LewistownFO_MT/blm_in_lewistown_prioritySG.shp")) %>%
+#   as_Spatial() %>%
+#   aggregate() #b/c multi-part
 
 #-------------------------------------------------------------------------------
 ## Load indicators
@@ -216,9 +220,12 @@ migr <- union(w1, w2) %>% union(w3)
 remove(w1, w2, w3)
 
 
-#IBA in Wyo; 
-# iba <- load_f(paste0(data.dir,"source/IBA_CONUS/Important_Bird_Areas_Polygon_Public_View.shp")) %>% st_crop(wyo)
-iba <- load_f(paste0(data.dir, "RockSpringsFO_Wyo/audiba_WY_20150818/audiba_WY_20150818.shp")) %>% as_Spatial()
+#IBA 
+# iba <- load_f(paste0(local.data.dir,"/IBA_CONUS/Important_Bird_Areas_Polygon_Public_View.shp"))
+# iba_mt <- st_as_sf(iba) %>% st_intersection(st_as_sf(mt)) %>% as_Spatial()
+# shapefile(iba_mt, paste0(local.data.dir,"/IBA_CONUS/iba_mt.shp"))
+# iba_mt <- load_f(paste0(local.data.dir,"/IBA_CONUS/iba_mt.shp"))
+iba_wyo <- load_f(paste0(data.dir, "RockSpringsFO_Wyo/audiba_WY_20150818/audiba_WY_20150818.shp")) %>% as_Spatial()
 
 setwd("G:/My Drive/2Pew ACEC/Pew_ACEC/")
 
