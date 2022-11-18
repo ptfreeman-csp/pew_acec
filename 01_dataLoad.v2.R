@@ -25,7 +25,7 @@ proj.crs <- "+proj=aea +lat_0=23 +lon_0=-96 +lat_1=29.5 +lat_2=45.5 +x_0=0 +y_0=
 
 #-------------------------------------------------------------------------------
 # Load CONUS; retain western states.
-usa <- load_f("C:/Users/clitt/OneDrive/Desktop/data_gen/political/tl_2012_us_state.shp")
+usa <- load_f(paste0(data.dir, "/working/tl_2012_us_state.shp"))
 keeps <- c("Washington", "Oregon", "California", "Idaho", "Montana",
            "Wyoming", "Nevada", "Utah", "Colorado", "Arizona", "New Mexico")
 west <- usa %>% filter(NAME %in% keeps)
