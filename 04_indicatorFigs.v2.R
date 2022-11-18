@@ -10,10 +10,10 @@ today <- paste0(mid(Sys.Date(),3,2),
 
 ## Load csvs with raw results --------------------------------------------------
 
-data <- read.csv(paste0(out.dir, "Lewistown-MT_aoi_vs_sample_percentiles_220729_v1.csv")) %>%
-dplyr::select(an, dn, nv, vn, pv)
+data <- read.csv(paste0(out.dir, "Lewistown-MT_aoi_vs_sample_percentiles_221118_v2.csv")) %>%
+  dplyr::select(an, dn, nv, vn, pv)
 
-# data <- read.csv(paste0(out.dir, "RockSprings-WYO_aoi_vs_sample_percentiles_220729_v1.csv")) %>%
+# data <- read.csv(paste0(out.dir, "RockSprings-WYO_aoi_vs_sample_percentiles_221118_v1.csv")) %>%
 #   dplyr::select(an, dn, nv, vn, pv)
 
 

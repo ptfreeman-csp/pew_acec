@@ -10,10 +10,19 @@ aoisNames <- c(
   "Little Sandy"
 )
 
-a <- aoisShapes[[1]]; print(aoisNames[1])
+# aoisShapes <- list(lewis)
+# aoisNames <- c(
+#   "Lewistown"
+# )
+
+
+# a <- aoisShapes[[1]]; print(aoisNames[1])
 a <- aoisShapes[[2]]; print(aoisNames[2])
 
-# Area in square m in all Wyo; nb can't set km in area()
+# iba <- iba_mt %>% as_Spatial()
+iba <- iba_wyo
+
+# Area in square m; nb can't set km in area()
 migrArea <- terra::area(migr) %>% sum()#/1000000
 ibaArea <- terra::area(iba) %>% sum()#/1000000
 
@@ -29,13 +38,16 @@ ibaAreaAoi <- st_as_sf(iba) %>%
   terra::area() %>%
   sum()#/1000000
 
+# Of all migration corridor or IBA area in the state, AOI has x %.
 (migrPercAoi <- migrAreaAoi/migrArea)
 (ibaPercAoi <- ibaAreaAoi/ibaArea)
 
 (aoiArea <- a %>% terra::area() %>% sum())#/1000000
 (wyoArea <- wyo %>%  terra::area() %>% sum())#/1000000
+# (mtArea <- mt %>%  terra::area() %>% sum())#/1000000
 
 (aoiPercWyo <- aoiArea/wyoArea)
+# (aoiPercMt <- aoiArea/mtArea)
 
 (aoiArea/1000000*acre_in_km)
 
