@@ -4,18 +4,16 @@
 
 The scripts within this repository generate metrics and figures that express the relative ecological values (e.g., species richness, ecological connectivity, geophysical diversity, extractive industry threats, etc.) of a candidate BLM Area of Critical Environmental Concern under consideration. 
 
-The workflow is as follows: 
+The workflow is as follows, and scripts must be run in this order: 
 <ul>
-  <li>00_setup.v2.R - load requisite packages and sets several parameters for R environment</li>
-  <li>01_dataLoad.v2.R - load shapefiles for candidate ACEC and relevant geographies and rastesr of ecological indicators</li>
-  <li>03_extractVals.v2.R - extracts ecological indicator values for both the candidate ACEC and random samples across multiple spatial domains</li>
-  <li>03_extractVals.v2.R - extracts ecological indicator values for both the candidate ACEC and random samples across multiple spatial domains</li>
- <li>04_indicatorFigs.v2.R - generates summary figures</li>
- <li>05_bonusPts.R - for specific candidate ACECs, generates summary statistics that are unique to that area (e.g., contribution to Important Bird Areas)</li>
+ <li>`00_setup.v2.R` - sets working directory and loads requisite packages and sets several parameters for R environment</li>
+ <li>`01_dataLoad.v2.R` - load shapefiles for candidate ACEC and relevant geographies and rastesr of ecological indicators</li>
+ <li>`03_extractVals.v2.R` - extracts ecological indicator values for both the candidate ACEC and random samples across multiple spatial domains</li>
+ <li>`04_indicatorFigs.v2.R` - generates summary figures</li>
+ <li>`05_bonusPts.R` - for specific candidate ACECs, generates summary statistics that are unique to that area (e.g., contribution to Important Bird Areas)</li>
 </ul>
 
-
-_Scripts:_ `prep-samples.R`, `influence-analysis.R`<br>
+_N.b. set working directory and input/output folders in 00_; script 02_ was discontinued and is not included here; 
 
 
 
