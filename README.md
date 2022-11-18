@@ -12,6 +12,6 @@ The workflow is as follows, and scripts must be run in this order:
 `04_indicatorFigs.v2.R` - selects extracted values<sup>2</sup> and generates summary figures</br>
 `05_bonusPts.R` - generates summary statistics that are unique to specific candidate ACECs (e.g., contribution to Important Bird Areas)</br>
 
-<sup>1</sup> user must modify both working directory and input/outputs</br>
-<sup>2</sup> user must modify csv path to path to match the one generated in 03</br>
+<sup>1</sup> User must modify both working directory and input/outputs in lines 7-11, set usa shapefile location in line 28, and temporarily change working directory to data folder in line 119 then back in line 230.</br>
+<sup>2</sup> User must modify csv name in line 13 to reflect date and version generated in script 03</br>
 _Nb there is no script 02, as it was discontinued early in project_</br>
